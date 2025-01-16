@@ -12,12 +12,12 @@ export default function Landing() {
           potential and become the best version of yourself.
         </p>
         <div className='buttons'>
-          <button>
-            <Link to={'/signup'}>Signup</Link>
-          </button>
-          <button>
-            <Link to={'/signin'}>Signin</Link>
-          </button>
+          <Link to={'/signup'}>
+            <button className='filled'>Signup</button>
+          </Link>
+          <Link to={'/signin'}>
+            <button className='elevated'>Signin</button>
+          </Link>
         </div>
       </div>
 
