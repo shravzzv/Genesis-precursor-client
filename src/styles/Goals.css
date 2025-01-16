@@ -48,8 +48,13 @@
 }
 
 @media (min-width: 840px) {
-  .addGoal {
-    bottom: 20px;
-    right: 20px;
+  .goals {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    align-content: start;
+
+    .addGoal {
+      bottom: 20px;
+      right: 20px;
+    }
   }
 }
