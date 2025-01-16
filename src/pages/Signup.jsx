@@ -1,4 +1,4 @@
-import '../styles/Signup.css'
+import '../styles/LandingForms.css'
 import { Link } from 'react-router-dom'
 
 export default function Signup() {
