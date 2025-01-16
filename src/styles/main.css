@@ -96,7 +96,7 @@ option {
 
 /* compact window class */
 @media (max-width: 599px) {
-  body {
+  body:not(:has(.hero, .signup, .signin)) {
     margin-bottom: calc(80px); /* offset the fixed navbar */
 
     .pane {
@@ -107,14 +107,14 @@ option {
 
 /* medium window size class */
 @media (min-width: 600px) and (max-width: 839px) {
-  body {
+  body:not(:has(.hero, .signup, .signin)) {
     margin-left: calc(80px); /* to offset the fixed navigation rail */
   }
 }
 
 /* styles similar for expanded, large and extra large window size classes  */
 @media (min-width: 840px) {
-  body {
+  body:not(:has(.hero, .signup, .signin)) {
     margin-left: calc(360px); /* to offset the fixed navigation drawer */
     padding: 24px 24px 24px 0;
     background-color: var(--surface-container);
@@ -122,33 +122,6 @@ option {
     .pane {
       border-radius: 16px;
       min-height: calc(100vh - 48px);
-
-      .appBar {
-        h1 {
-          display: none;
-        }
-      }
-
-      &.club {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-
-      &.search {
-        form {
-          .formControl {
-            min-width: 360px;
-          }
-        }
-      }
-
-      &.forgotPassword {
-        p {
-          max-width: 360px;
-        }
-      }
     }
   }
 }
