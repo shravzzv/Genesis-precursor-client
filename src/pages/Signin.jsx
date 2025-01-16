@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 
 export default function Signin() {
   return (
-    <main className='signin'>
-      <form>
+    <main className='signin '>
+      <form className='scale-in-center'>
         <h1>Login to your account.</h1>
         <div className='formControl'>
           <label htmlFor='email'>Email:</label>

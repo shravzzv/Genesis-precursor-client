@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 export default function Signup() {
   return (
     <main className='signup'>
-      <form>
+      <form className='scale-in-center'>
         <h1>Create your acccount</h1>
         <div className='formControl'>
           <label htmlFor='email'>Email*:</label>
