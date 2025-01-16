@@ -1,4 +1,5 @@
 import '../styles/Landing.css'
+import { Link } from 'react-router-dom'
 
 export default function Landing() {
   return (
@@ -12,10 +13,10 @@ export default function Landing() {
         </p>
         <div className='buttons'>
           <button>
-            <a href='/signup'>Signup</a>
+            <Link to={'/signup'}>Signup</Link>
           </button>
           <button>
-            <a href='/signin'>Signin</a>
+            <Link to={'/signin'}>Signin</Link>
           </button>
         </div>
       </div>
