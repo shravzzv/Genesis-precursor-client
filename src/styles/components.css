@@ -526,3 +526,81 @@ html:has(dialog[open]) {
     overflow: hidden;
   }
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: stretch;
+  gap: 10px;
+  background-color: var(--surface-container-lowest);
+  color: var(--on-surface);
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  margin: 0px 20px;
+  padding: 30px;
+
+  .formControl {
+    label {
+      display: block;
+      font-weight: 500;
+      margin: 5px 0;
+    }
+
+    input,
+    textarea {
+      padding: 10px 15px;
+      resize: vertical;
+      border: none;
+      border: 1px solid var(--on-surface);
+      color: inherit;
+      background-color: inherit;
+      border-radius: 10px;
+      width: 100%;
+
+      &:focus,
+      &:active {
+        outline: 2px solid var(--outline);
+      }
+    }
+
+    &:has(> [type='checkbox']) {
+      flex-direction: row;
+      margin-top: 10px;
+      margin-bottom: 10px;
+
+      label {
+        display: inline;
+      }
+
+      input {
+        display: inline;
+        width: 24px;
+        outline: none;
+      }
+    }
+  }
+
+  .error {
+    color: var(--error);
+    font-size: 14px;
+    display: block;
+    margin-top: 5px;
+  }
+
+  .guidelines {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+    span {
+      display: block;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    padding: 30px;
+  }
+
+  @media screen and (min-width: 1024px) {
+    padding: 50px;
+  }
+}
