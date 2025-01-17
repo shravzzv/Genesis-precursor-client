@@ -5,13 +5,19 @@ Goal.propTypes = {
   name: PropTypes.string.isRequired,
   id: PropTypes.number.isRequired,
   showGenerateTodos: PropTypes.bool,
-  handleUpdate: PropTypes.func,
   handleDelete: PropTypes.func,
+  onEdit: PropTypes.func,
 }
 
-export default function Goal({ name, id, showGenerateTodos, handleDelete }) {
+export default function Goal({
+  name,
+  id,
+  showGenerateTodos,
+  handleDelete,
+  onEdit,
+}) {
   return (
-    <article className='goal'>
+    <article className='goal scale-in-center'>
       <p className='name'>{name}</p>
 
       {showGenerateTodos && (
@@ -29,7 +35,7 @@ export default function Goal({ name, id, showGenerateTodos, handleDelete }) {
       )}
 
       <div className='controls'>
-        <button className='icon'>
+        <button className='icon' onClick={() => onEdit({ id, name })}>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             height='24px'

@@ -25,18 +25,19 @@ export default function Goals() {
     { name: 'Create a personal website to showcase my portfolio', id: 14 },
   ]
 
-  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [goals, setGoals] = useState(data)
   const [newGoalName, setNewGoalName] = useState('')
+  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
+  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
+  const [currentGoal, setCurrentGoal] = useState(null)
 
   const handleDelete = (id) => {
     setGoals(goals.filter((goal) => goal.id !== id))
   }
 
-  const handleUpdate = (id, newName) => {
-    setGoals(
-      goals.map((goal) => (goal.id === id ? { ...goal, name: newName } : goal))
-    )
+  const handleUpdate = (goal) => {
+    setCurrentGoal(goal)
+    setIsUpdateFormOpen(true)
   }
 
   const handleSubmit = (e) => {
@@ -44,6 +45,16 @@ export default function Goals() {
     goals.push({ name: newGoalName, id: id++ })
     setNewGoalName('')
     setIsCreateFormOpen(false)
+  }
+
+  const handleUpdateSubmit = (e) => {
+    e.preventDefault()
+    setGoals(
+      goals.map((goal) =>
+        goal.id === currentGoal.id ? { ...goal, name: currentGoal.name } : goal
+      )
+    )
+    setIsUpdateFormOpen(false)
   }
 
   return (
@@ -56,8 +67,8 @@ export default function Goals() {
             id={goal.id}
             name={goal.name}
             showGenerateTodos
-            handleUpdate={handleUpdate}
             handleDelete={handleDelete}
+            onEdit={handleUpdate}
           />
         ))}
         <button
@@ -115,11 +126,50 @@ export default function Goals() {
             </div>
           </form>
         </dialog>
+
+        <dialog open={isUpdateFormOpen}>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            height='24px'
+            viewBox='0 -960 960 960'
+            width='24px'
+            className='icon'
+          >
+            <path d='M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z' />
+          </svg>
+
+          <div className='headline'>Update a goal</div>
+
+          <form onSubmit={handleUpdateSubmit}>
+            <div className='formControl'>
+              <label htmlFor='name'>Updated name:</label>
+              <input
+                type='text'
+                name='name'
+                id='name'
+                value={currentGoal?.name || ''}
+                onChange={(e) =>
+                  setCurrentGoal({ ...currentGoal, name: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className='actions'>
+              <button
+                className='text'
+                type='button'
+                onClick={() => setIsUpdateFormOpen(false)}
+              >
+                Cancel
+              </button>
+              <button type='submit' className='filled'>
+                Update
+              </button>
+            </div>
+          </form>
+        </dialog>
       </main>
     </>
   )
 }
-
-// todo: implement the addGoal functionality
-// todo: implment the generateTodos functionality
-// todo: implement the updateGoal functionality
