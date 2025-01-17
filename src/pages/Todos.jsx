@@ -102,7 +102,12 @@ export default function Todos() {
   ]
 
   const [todos, setTodos] = useState(data)
-  const [newTodo, setNewTodoName] = useState('')
+  const [newTodo, setNewTodo] = useState({
+    title: '',
+    description: '',
+    deadline: '',
+    goal: '',
+  })
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
   const [currentTodo, setCurrentTodo] = useState(null)
@@ -118,8 +123,13 @@ export default function Todos() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    todos.push({ name: newTodo, id: id++ })
-    setNewTodoName('')
+    setTodos([...todos, { ...newTodo, id: id++ }])
+    setNewTodo({
+      title: '',
+      description: '',
+      deadline: '',
+      goal: '',
+    })
     setIsCreateFormOpen(false)
   }
 
@@ -127,13 +137,14 @@ export default function Todos() {
     e.preventDefault()
     setTodos(
       todos.map((todo) =>
-        todo.id === currentTodo.id ? { ...todo, name: currentTodo.name } : todo
+        todo.id === currentTodo.id ? { ...todo, ...currentTodo } : todo
       )
     )
     setIsUpdateFormOpen(false)
   }
 
   const goals = [
+    'none',
     'Personal Development',
     'Health & Fitness',
     'Career Advancement',
@@ -191,22 +202,55 @@ export default function Todos() {
           <form onSubmit={handleSubmit}>
             <div className='formControl'>
               <label htmlFor='title'>Title:*</label>
-              <input type='text' name='title' id='title' required autoFocus />
+              <input
+                type='text'
+                name='title'
+                id='title'
+                value={newTodo.title}
+                onChange={(e) =>
+                  setNewTodo({ ...newTodo, title: e.target.value })
+                }
+                required
+                autoFocus
+              />
             </div>
 
             <div className='formControl'>
               <label htmlFor='description'>Description:</label>
-              <textarea name='description' id='description' rows='3'></textarea>
+              <textarea
+                name='description'
+                id='description'
+                rows='3'
+                value={newTodo.description}
+                onChange={(e) =>
+                  setNewTodo({ ...newTodo, description: e.target.value })
+                }
+              ></textarea>
             </div>
 
             <div className='formControl'>
               <label htmlFor='deadline'>Deadline:</label>
-              <input type='datetime-local' name='deadline' id='deadline' />
+              <input
+                type='datetime-local'
+                name='deadline'
+                id='deadline'
+                value={newTodo.deadline}
+                onChange={(e) =>
+                  setNewTodo({ ...newTodo, deadline: e.target.value })
+                }
+              />
             </div>
 
             <div className='formControl'>
               <label htmlFor='goal'>Goal:</label>
-              <select name='goal' id='goal'>
+              <select
+                name='goal'
+                id='goal'
+                value={newTodo.goal}
+                onChange={(e) =>
+                  setNewTodo({ ...newTodo, goal: e.target.value })
+                }
+              >
                 {goals.map((goal, index) => (
                   <option key={index} value={goal}>
                     {goal}
