@@ -11,91 +11,92 @@ export default function Todos() {
       description:
         'lorem ipsum dolor sit amet lorem ispum dolor sit maet lorem ispum dolor sit maet',
       goal: 'Career Advancement of the second kind and lorem ipsum dolor sit amet.',
+      deadline: '2025-01-26T13:39',
       id: 1,
     },
     {
       title: 'Buy groceries for the week',
       description: 'Purchase vegetables, fruits, and other essentials',
-      deadline: '2023-10-16',
+      deadline: '2025-01-26T13:39',
       id: 2,
     },
     {
       title: 'Schedule a meeting with the team',
       description: 'Organize a meeting to discuss project updates',
-      deadline: '2023-10-17',
+      deadline: '2025-01-26T13:39',
       goal: 'Career Advancement',
       id: 3,
     },
     {
       title: 'Pay utility bills',
       description: 'Pay electricity, water, and internet bills',
-      deadline: '2023-10-18',
+      deadline: '2025-01-26T13:39',
       id: 4,
     },
     {
       title: 'Plan the weekend trip',
       description: 'Decide on the destination and make necessary bookings',
-      deadline: '2023-10-19',
+      deadline: '2025-01-26T13:39',
       goal: 'Recreation & Leisure',
       id: 5,
     },
     {
       title: 'Organize the workspace',
       description: 'Clean and arrange the desk and shelves',
-      deadline: '2023-10-20',
+      deadline: '2025-01-26T13:39',
       id: 6,
     },
     {
       title: 'Read the new book',
       description: 'Start reading the book purchased last week',
-      deadline: '2023-10-21',
+      deadline: '2025-01-26T13:39',
       goal: 'Personal Development',
       id: 7,
     },
     {
       title: 'Exercise for 30 minutes',
       description: 'Do a 30-minute workout session',
-      deadline: '2023-10-22',
+      deadline: '2025-01-26T13:39',
       goal: 'Health & Fitness',
       id: 8,
     },
     {
       title: 'Call family and friends',
       description: 'Catch up with family and friends over the phone',
-      deadline: '2023-10-23',
+      deadline: '2025-01-26T13:39',
       id: 9,
     },
     {
       title: 'Prepare for the presentation',
       description: 'Create slides and practice for the upcoming presentation',
-      deadline: '2023-10-24',
+      deadline: '2025-01-26T13:39',
       goal: 'Career Advancement',
       id: 10,
     },
     {
       title: 'Clean the house',
       description: 'Do a thorough cleaning of the house',
-      deadline: '2023-10-25',
+      deadline: '2025-01-26T13:39',
       id: 11,
     },
     {
       title: 'Meditate for 15 minutes',
       description: 'Spend 15 minutes meditating',
-      deadline: '2023-10-26',
+      deadline: '2025-01-26T13:39',
       goal: 'Spiritual Growth',
       id: 12,
     },
     {
       title: 'Learn a new skill online',
       description: 'Enroll in an online course and start learning',
-      deadline: '2023-10-27',
+      deadline: '2025-01-26T13:39',
       goal: 'Educational Pursuits',
       id: 13,
     },
     {
       title: 'Update the resume',
       description: 'Revise and update the resume with recent experiences',
-      deadline: '2023-10-28',
+      deadline: '2025-01-26T13:39',
       goal: 'Career Advancement',
       id: 14,
     },
@@ -289,17 +290,64 @@ export default function Todos() {
 
           <form onSubmit={handleUpdateSubmit}>
             <div className='formControl'>
-              <label htmlFor='name'>Updated name:</label>
+              <label htmlFor='title'>Title:*</label>
               <input
                 type='text'
-                name='name'
-                id='name'
-                value={currentTodo?.name || ''}
+                name='title'
+                id='title'
+                value={currentTodo?.title || ''}
                 onChange={(e) =>
-                  setCurrentTodo({ ...currentTodo, name: e.target.value })
+                  setCurrentTodo({ ...currentTodo, title: e.target.value })
                 }
                 required
               />
+            </div>
+
+            <div className='formControl'>
+              <label htmlFor='description'>Description:</label>
+              <textarea
+                name='description'
+                id='description'
+                rows='3'
+                value={currentTodo?.description || ''}
+                onChange={(e) =>
+                  setCurrentTodo({
+                    ...currentTodo,
+                    description: e.target.value,
+                  })
+                }
+              ></textarea>
+            </div>
+
+            <div className='formControl'>
+              <label htmlFor='deadline'>Deadline:</label>
+              <input
+                type='datetime-local'
+                name='deadline'
+                id='deadline'
+                value={currentTodo?.deadline || ''}
+                onChange={(e) =>
+                  setCurrentTodo({ ...currentTodo, deadline: e.target.value })
+                }
+              />
+            </div>
+
+            <div className='formControl'>
+              <label htmlFor='goal'>Goal:</label>
+              <select
+                name='goal'
+                id='goal'
+                value={currentTodo?.goal || ''}
+                onChange={(e) =>
+                  setCurrentTodo({ ...currentTodo, goal: e.target.value })
+                }
+              >
+                {goals.map((goal, index) => (
+                  <option key={index} value={goal}>
+                    {goal}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className='actions'>
