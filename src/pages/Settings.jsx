@@ -13,10 +13,8 @@ export default function Settings() {
 
         <div className='theme'>
           <span>Theme:</span>
-          <select name='theme' id='theme'>
-            <option value='system' selected>
-              System
-            </option>
+          <select name='theme' id='theme' defaultValue='system'>
+            <option value='system'>System</option>
             <option value='light'>Light</option>
             <option value='dark'>Dark</option>
           </select>
