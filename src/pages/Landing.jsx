@@ -1,7 +1,16 @@
 import '../styles/Landing.css'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
-export default function Landing() {
+Landing.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
+
+export default function Landing({ isAuthenticated }) {
+  if (isAuthenticated) {
+    return <Navigate to={'/goals'} replace />
+  }
+
   return (
     <main className='landing'>
       <div className='hero'>

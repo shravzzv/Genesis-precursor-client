@@ -8,20 +8,34 @@ import Todos from './pages/Todos'
 import Habits from './pages/Habits'
 import Journals from './pages/Journals'
 import Settings from './pages/Settings'
+import { useState } from 'react'
 
 export default function Router() {
+  const token = localStorage.getItem('token')
+  const [isAuthenticated, setIsAuthenticated] = useState(token ? true : false)
+
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Landing />,
+      element: <Landing isAuthenticated={isAuthenticated} />,
     },
     {
       path: '/signup',
-      element: <Signup />,
+      element: (
+        <Signup
+          isAuthenticated={isAuthenticated}
+          setIsAuthenticated={setIsAuthenticated}
+        />
+      ),
     },
     {
       path: '/signin',
-      element: <Signin />,
+      element: (
+        <Signin
+          isAuthenticated={isAuthenticated}
+          setIsAuthenticated={setIsAuthenticated}
+        />
+      ),
     },
     {
       path: '/goals',
@@ -41,7 +55,12 @@ export default function Router() {
     },
     {
       path: '/settings',
-      element: <Settings />,
+      element: (
+        <Settings
+          isAuthenticated={isAuthenticated}
+          setIsAuthenticated={setIsAuthenticated}
+        />
+      ),
     },
     {
       path: '*',

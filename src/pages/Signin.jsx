@@ -1,9 +1,15 @@
 import '../styles/LandingForms.css'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import PropTypes from 'prop-types'
 
-export default function Signin() {
+Signin.propTypes = {
+  isAuthenticated: PropTypes.bool,
+  setIsAuthenticated: PropTypes.func,
+}
+
+export default function Signin({ isAuthenticated, setIsAuthenticated }) {
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -31,6 +37,7 @@ export default function Signin() {
 
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('uid', response.data.uid)
+      setIsAuthenticated(true)
       navigate('/goals')
     } catch (error) {
       setErrors(error.response.data)
@@ -42,6 +49,10 @@ export default function Signin() {
   const getErrorMessage = (field) => {
     const error = errors.find((error) => error.path === field)
     return error ? error.msg : ''
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={'/goals'} replace />
   }
 
   return (
