@@ -416,6 +416,7 @@ button {
     box-shadow: var(--elevation-level-3);
     border-radius: var(--shape-corner-medium);
     background-color: var(--primary-container);
+    z-index: 2;
 
     & svg {
       width: 24px;

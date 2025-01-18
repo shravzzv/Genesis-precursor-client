@@ -1,0 +1,76 @@
+.habit {
+  background-color: var(--secondary-container);
+  padding: 10px 25px;
+  border-radius: 15px;
+  box-shadow: var(--elevation-level-2);
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+
+  .today {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 10px;
+
+    .title {
+      margin: 0;
+
+      &.completed {
+        text-decoration: line-through;
+        text-decoration-thickness: 3px;
+      }
+    }
+  }
+
+  .title {
+    color: var(--primary);
+    max-width: 200px;
+    margin-bottom: 5px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+
+  .repeatDays {
+    margin-bottom: 10px;
+  }
+
+  .controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 599px) {
+  .habit {
+    .title {
+      max-width: 220px;
+    }
+  }
+}
+
+@media (min-width: 600px) and (max-width: 839px) {
+  .habit {
+    .title {
+      max-width: 200px;
+    }
+  }
+}
+
+@media (min-width: 840px) {
+  .habit {
+    .title {
+      max-width: 300px;
+    }
+  }
+}
