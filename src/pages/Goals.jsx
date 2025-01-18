@@ -1,8 +1,9 @@
 import '../styles/Goals.css'
 import Goal from '../components/Goal'
 import Navbar from '../components/Navbar'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
+import axios from 'axios'
 import PropTypes from 'prop-types'
 
 Goals.propTypes = {
@@ -10,35 +11,43 @@ Goals.propTypes = {
 }
 
 export default function Goals({ isAuthenticated }) {
-  let id = 15
-  const data = [
-    { name: 'Learn programming and build a personal project', id: 1 },
-    { name: 'Learn cooking and try out new recipes every week', id: 2 },
-    { name: 'Exercise regularly to maintain a healthy lifestyle', id: 3 },
-    { name: 'Read more books and expand my knowledge', id: 4 },
-    { name: 'Travel the world and experience different cultures', id: 5 },
-    { name: 'Save money for future investments and emergencies', id: 6 },
-    {
-      name: 'Learn a new language on Duolingo practicing everyday to become fluent',
-      id: 7,
-    },
-    { name: 'Start a blog and share my thoughts and experiences', id: 8 },
-    { name: 'Volunteer and give back to the community', id: 9 },
-    { name: 'Improve public speaking skills by joining a local club', id: 10 },
-    { name: 'Take a photography course and improve my skills', id: 11 },
-    { name: 'Meditate daily to improve mental health', id: 12 },
-    { name: 'Learn to play a musical instrument', id: 13 },
-    { name: 'Create a personal website to showcase my portfolio', id: 14 },
-  ]
-
-  const [goals, setGoals] = useState(data)
+  const [goals, setGoals] = useState([])
   const [newGoalName, setNewGoalName] = useState('')
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
   const [currentGoal, setCurrentGoal] = useState(null)
 
-  const handleDelete = (id) => {
-    setGoals(goals.filter((goal) => goal.id !== id))
+  useEffect(() => {
+    const fetchGoals = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get('http://localhost:3000/goals', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setGoals(response.data)
+      } catch (error) {
+        console.error('Error fetching goals:', error)
+      }
+    }
+
+    fetchGoals()
+    return () => {}
+  }, [])
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(`http://localhost:3000/goals/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      setGoals(goals.filter((goal) => goal._id !== id))
+    } catch (error) {
+      console.error('Error deleting goal:', error)
+    }
   }
 
   const handleUpdate = (goal) => {
@@ -46,21 +55,52 @@ export default function Goals({ isAuthenticated }) {
     setIsUpdateFormOpen(true)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    goals.push({ name: newGoalName, id: id++ })
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.post(
+        'http://localhost:3000/goals',
+        { name: newGoalName },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      setGoals([...goals, response.data.newGoal])
+    } catch (error) {
+      console.error('Error creating goal:', error)
+    }
     setNewGoalName('')
     setIsCreateFormOpen(false)
   }
 
-  const handleUpdateSubmit = (e) => {
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault()
-    setGoals(
-      goals.map((goal) =>
-        goal.id === currentGoal.id ? { ...goal, name: currentGoal.name } : goal
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.put(
+        `http://localhost:3000/goals/${currentGoal.id}`,
+        { name: currentGoal.name },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
-    )
-    setIsUpdateFormOpen(false)
+
+      setGoals(
+        goals.map((goal) =>
+          goal._id === response.data._id
+            ? { ...goal, name: response.data.name }
+            : goal
+        )
+      )
+      setIsUpdateFormOpen(false)
+    } catch (error) {
+      console.error('Error updating goal:', error)
+    }
   }
 
   if (!isAuthenticated) {
@@ -71,10 +111,12 @@ export default function Goals({ isAuthenticated }) {
     <>
       <Navbar />
       <main className='pane goals'>
+        {goals.length === 0 && <p>There are no goals yet, create some!</p>}
+
         {goals.map((goal) => (
           <Goal
-            key={goal.id}
-            id={goal.id}
+            key={goal._id}
+            id={goal._id}
             name={goal.name}
             showGenerateTodos
             handleDelete={handleDelete}

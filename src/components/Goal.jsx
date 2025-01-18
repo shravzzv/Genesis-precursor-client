@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 Goal.propTypes = {
   name: PropTypes.string.isRequired,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   showGenerateTodos: PropTypes.bool,
   handleDelete: PropTypes.func,
   onEdit: PropTypes.func,
