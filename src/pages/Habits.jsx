@@ -2,8 +2,14 @@ import '../styles/Habits.css'
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Habit from '../components/Habit'
+import { Navigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
-export default function Habits() {
+Habits.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
+
+export default function Habits({ isAuthenticated }) {
   let id = 11
   const data = [
     {
@@ -151,6 +157,10 @@ export default function Habits() {
         }
       }
     })
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to={'/signin'} replace />
   }
 
   return (

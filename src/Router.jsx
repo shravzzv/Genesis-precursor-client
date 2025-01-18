@@ -39,19 +39,19 @@ export default function Router() {
     },
     {
       path: '/goals',
-      element: <Goals />,
+      element: <Goals isAuthenticated={isAuthenticated} />,
     },
     {
       path: '/todos',
-      element: <Todos />,
+      element: <Todos isAuthenticated={isAuthenticated} />,
     },
     {
       path: '/habits',
-      element: <Habits />,
+      element: <Habits isAuthenticated={isAuthenticated} />,
     },
     {
       path: '/journals',
-      element: <Journals />,
+      element: <Journals isAuthenticated={isAuthenticated} />,
     },
     {
       path: '/settings',
@@ -64,7 +64,7 @@ export default function Router() {
     },
     {
       path: '*',
-      element: <Error />,
+      element: <Error isAuthenticated={isAuthenticated} />,
     },
   ])
 

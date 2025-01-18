@@ -2,8 +2,14 @@ import '../styles/Goals.css'
 import Goal from '../components/Goal'
 import Navbar from '../components/Navbar'
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
-export default function Goals() {
+Goals.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
+
+export default function Goals({ isAuthenticated }) {
   let id = 15
   const data = [
     { name: 'Learn programming and build a personal project', id: 1 },
@@ -55,6 +61,10 @@ export default function Goals() {
       )
     )
     setIsUpdateFormOpen(false)
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to={'/signin'} replace />
   }
 
   return (

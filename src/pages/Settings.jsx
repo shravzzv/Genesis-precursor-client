@@ -1,7 +1,7 @@
 import '../styles/Settings.css'
 import Navbar from '../components/Navbar'
-import PropTypes from 'prop-types'
 import { Navigate, useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 Settings.propTypes = {
   isAuthenticated: PropTypes.bool,

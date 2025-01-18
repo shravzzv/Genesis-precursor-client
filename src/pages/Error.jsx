@@ -1,6 +1,16 @@
+import { Navigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import PropTypes from 'prop-types'
 
-export default function Error() {
+Error.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
+
+export default function Error({ isAuthenticated }) {
+  if (!isAuthenticated) {
+    return <Navigate to={'/signin'} replace />
+  }
+
   return (
     <>
       <Navbar />

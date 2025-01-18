@@ -2,8 +2,14 @@ import '../styles/Todos.css'
 import Todo from '../components/Todo'
 import Navbar from '../components/Navbar'
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
-export default function Todos() {
+Todos.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
+
+export default function Todos({ isAuthenticated }) {
   let id = 15
   const data = [
     {
@@ -157,6 +163,10 @@ export default function Todos() {
     'Educational Pursuits',
     'Home Improvement',
   ]
+
+  if (!isAuthenticated) {
+    return <Navigate to={'/signin'} replace />
+  }
 
   return (
     <>

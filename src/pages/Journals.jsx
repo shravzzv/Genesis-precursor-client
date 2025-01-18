@@ -2,8 +2,14 @@ import '../styles/Journals.css'
 import Navbar from '../components/Navbar'
 import Journal from '../components/Journal'
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
-export default function Journals() {
+Journals.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
+
+export default function Journals({ isAuthenticated }) {
   let id = 11
   const data = [
     {
@@ -90,6 +96,10 @@ export default function Journals() {
       )
     )
     setIsUpdateFormOpen(false)
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to={'/signin'} replace />
   }
 
   return (
