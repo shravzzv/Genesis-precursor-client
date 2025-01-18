@@ -1,0 +1,15 @@
+.settings {
+  h1 {
+    color: var(--primary);
+  }
+
+  .theme {
+    span {
+      margin-right: 10px;
+    }
+  }
+
+  button.logout {
+    margin: 10px 0;
+  }
+}

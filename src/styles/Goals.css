@@ -1,0 +1,60 @@
+.goals {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 15px;
+  padding-bottom: 100px !important;
+
+  .addGoal {
+    position: fixed;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  dialog {
+    form {
+      background-color: inherit;
+      box-shadow: none;
+      padding: 10px;
+      margin: 0;
+
+      .formControl {
+        label {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 599px) {
+  .goals {
+    .addGoal {
+      bottom: 80px;
+      right: 0;
+    }
+  }
+}
+
+@media (min-width: 600px) and (max-width: 839px) {
+  .goals {
+    .addGoal {
+      bottom: 20px;
+      right: 20px;
+    }
+  }
+}
+
+@media (min-width: 840px) {
+  .goals {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    align-content: start;
+
+    .addGoal {
+      bottom: 20px;
+      right: 20px;
+    }
+  }
+}
