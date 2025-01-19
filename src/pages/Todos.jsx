@@ -15,7 +15,6 @@ export default function Todos({ isAuthenticated }) {
   const [goals, setGoals] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [currentTodo, setCurrentTodo] = useState(null)
-  console.log('currentTodo:', currentTodo)
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
   const [newTodo, setNewTodo] = useState({
