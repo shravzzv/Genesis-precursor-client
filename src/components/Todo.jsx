@@ -2,11 +2,12 @@ import '../styles/Todo.css'
 import PropTypes from 'prop-types'
 
 Todo.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
   deadline: PropTypes.string,
-  goal: PropTypes.string,
+  goalName: PropTypes.string,
+  goalId: PropTypes.string,
   onEdit: PropTypes.func,
   handleDelete: PropTypes.func,
 }
@@ -16,7 +17,8 @@ export default function Todo({
   title,
   description,
   deadline,
-  goal,
+  goalName,
+  goalId,
   onEdit,
   handleDelete,
 }) {
@@ -31,12 +33,28 @@ export default function Todo({
     return new Date(deadline).toLocaleDateString(undefined, options)
   }
 
+  const formatDeadlineForInput = (deadline) => {
+    const date = new Date(deadline)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+  }
+
   return (
     <article className='todo scale-in-center'>
       <p className='title'>{title}</p>
       {description && <p className='description'>{description}</p>}
 
-      {goal && <button className='elevated'>{goal.slice(0, 20)}...</button>}
+      {goalName && (
+        <button className='elevated'>
+          {goalName.length > 20
+            ? goalName.slice(0, 20).trimEnd() + '...'
+            : goalName}
+        </button>
+      )}
 
       {deadline && (
         <div className='deadline'>
@@ -55,7 +73,15 @@ export default function Todo({
       <div className='controls'>
         <button
           className='icon'
-          onClick={() => onEdit({ id, title, description, deadline, goal })}
+          onClick={() =>
+            onEdit({
+              id,
+              title,
+              description,
+              deadline: formatDeadlineForInput(deadline),
+              goal: goalId,
+            })
+          }
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'

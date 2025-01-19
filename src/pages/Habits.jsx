@@ -1,85 +1,65 @@
 import '../styles/Habits.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import Habit from '../components/Habit'
+import { Navigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import axios from 'axios'
 
-export default function Habits() {
-  let id = 11
-  const data = [
-    {
-      id: '1',
-      title: 'Morning Run',
-      description: 'Run 5km every morning',
-      repeatDays: ['Monday', 'Wednesday', 'Friday'],
-    },
-    {
-      id: '2',
-      title: 'Read Book',
-      description: 'Read 30 pages of a book',
-      repeatDays: ['Tuesday', 'Thursday', 'Saturday'],
-    },
-    {
-      id: '3',
-      title: 'Meditation',
-      description: 'Meditate for 20 minutes',
-      repeatDays: ['Sunday', 'Tuesday', 'Thursday'],
-    },
-    {
-      id: '4',
-      title: 'Workout',
-      description: 'Gym workout for 1 hour',
-      repeatDays: ['Monday', 'Wednesday', 'Friday'],
-    },
-    {
-      id: '5',
-      title: 'Learn Coding',
-      description: 'Practice coding for 2 hours',
-      repeatDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-    },
-    {
-      id: '6',
-      title: 'Drink Water',
-      description: 'Drink 8 glasses of water',
-      repeatDays: ['Everyday'],
-    },
-    {
-      id: '7',
-      title: 'Yoga',
-      description: 'Do yoga for 30 minutes',
-      repeatDays: ['Monday', 'Wednesday', 'Friday'],
-    },
-    {
-      id: '8',
-      title: 'Journal',
-      description: 'Write in journal for 15 minutes',
-      repeatDays: ['Sunday', 'Tuesday', 'Thursday'],
-    },
-    {
-      id: '9',
-      title: 'Cook Dinner',
-      description: 'Cook a healthy dinner',
-      repeatDays: ['Monday', 'Wednesday', 'Friday'],
-    },
-    {
-      id: '10',
-      title: 'Sleep Early',
-      description: 'Go to bed by 10 PM',
-      repeatDays: ['Everyday'],
-    },
-  ]
+Habits.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
 
-  const [habits, setHabits] = useState(data)
+export default function Habits({ isAuthenticated }) {
+  const [habits, setHabits] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [currentHabit, setCurrentHabit] = useState(null)
+  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
+  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
+  const [repeatDaysError, setRepeatDaysError] = useState(false)
   const [newHabit, setNewHabit] = useState({
     title: '',
     description: '',
     repeatDays: [],
   })
-  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
-  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
-  const [currentHabit, setCurrentHabit] = useState(null)
 
-  const handleDelete = (id) => {
-    setHabits(habits.filter((habit) => habit.id !== id))
+  useEffect(() => {
+    const fetchHabits = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/habits',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        setHabits(response.data)
+      } catch (error) {
+        console.error('Error fetching habits:', error)
+      }
+    }
+
+    fetchHabits()
+    return () => {}
+  }, [])
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(
+        `https://genesis-precursor-server-production.up.railway.app/habits/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      setHabits(habits.filter((habit) => habit._id !== id))
+    } catch (error) {
+      console.error('Error deleting habit:', error)
+    }
   }
 
   const handleUpdate = (habit) => {
@@ -87,9 +67,34 @@ export default function Habits() {
     setIsUpdateFormOpen(true)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setHabits([...habits, { ...newHabit, id: id++ }])
+    setIsLoading(true)
+
+    if (newHabit.repeatDays.length === 0) {
+      setRepeatDaysError(true)
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.post(
+        'https://genesis-precursor-server-production.up.railway.app/habits',
+        newHabit,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      setHabits([...habits, response.data.newHabit])
+    } catch (error) {
+      console.error('Error creating habit:', error)
+    } finally {
+      setIsLoading(false)
+      setRepeatDaysError(false)
+    }
     setNewHabit({
       title: '',
       description: '',
@@ -98,14 +103,41 @@ export default function Habits() {
     setIsCreateFormOpen(false)
   }
 
-  const handleUpdateSubmit = (e) => {
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault()
-    setHabits(
-      habits.map((habit) =>
-        habit.id === currentHabit.id ? { ...habit, ...currentHabit } : habit
+    setIsLoading(true)
+
+    if (currentHabit.repeatDays.length === 0) {
+      setRepeatDaysError(true)
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.put(
+        `https://genesis-precursor-server-production.up.railway.app/habits/${currentHabit.id}`,
+        currentHabit,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
-    )
-    setIsUpdateFormOpen(false)
+      setHabits(
+        habits.map((habit) =>
+          habit._id === response.data.updatedHabit._id
+            ? { ...habit, ...response.data.updatedHabit }
+            : habit
+        )
+      )
+      setIsUpdateFormOpen(false)
+    } catch (error) {
+      console.error('Error updating habit:', error)
+    } finally {
+      setRepeatDaysError(false)
+      setIsLoading(false)
+    }
   }
 
   const daysOfWeek = [
@@ -153,6 +185,10 @@ export default function Habits() {
     })
   }
 
+  if (!isAuthenticated) {
+    return <Navigate to={'/signin'} replace />
+  }
+
   return (
     <>
       <Navbar />
@@ -169,11 +205,13 @@ export default function Habits() {
           </svg>
         </h2>
 
+        {todayHabits.length === 0 && <p>There are no habits for today</p>}
+
         <div className='habits'>
           {todayHabits.map((habit) => (
             <Habit
-              key={habit.id}
-              id={habit.id}
+              key={habit._id}
+              id={habit._id}
               title={habit.title}
               description={habit.description}
               repeatDays={habit.repeatDays}
@@ -182,8 +220,6 @@ export default function Habits() {
               onEdit={handleUpdate}
             />
           ))}
-
-          {todayHabits.length === 0 && <p>There are no habits for today</p>}
 
           <button
             className='addHabit fab'
@@ -215,8 +251,8 @@ export default function Habits() {
         <div className='habits'>
           {habits.map((habit) => (
             <Habit
-              key={habit.id}
-              id={habit.id}
+              key={habit._id}
+              id={habit._id}
               title={habit.title}
               description={habit.description}
               repeatDays={habit.repeatDays}
@@ -285,17 +321,23 @@ export default function Habits() {
                 </div>
               ))}
             </div>
+            {repeatDaysError && (
+              <div className='error'>Select at least one repeat day!</div>
+            )}
 
             <div className='actions'>
               <button
                 className='text'
                 type='button'
-                onClick={() => setIsCreateFormOpen(false)}
+                onClick={() => {
+                  setIsCreateFormOpen(false)
+                  setRepeatDaysError(false)
+                }}
               >
                 Cancel
               </button>
               <button type='submit' className='filled'>
-                Create
+                {isLoading ? 'Creating...' : 'Create'}
               </button>
             </div>
           </form>
@@ -362,17 +404,23 @@ export default function Habits() {
                 </div>
               ))}
             </div>
+            {repeatDaysError && (
+              <div className='error'>Select at least one repeat day!</div>
+            )}
 
             <div className='actions'>
               <button
                 className='text'
                 type='button'
-                onClick={() => setIsUpdateFormOpen(false)}
+                onClick={() => {
+                  setIsUpdateFormOpen(false)
+                  setRepeatDaysError(false)
+                }}
               >
                 Cancel
               </button>
               <button type='submit' className='filled'>
-                Update
+                {isLoading ? 'Updating...' : 'Update'}
               </button>
             </div>
           </form>

@@ -1,71 +1,60 @@
 import '../styles/Journals.css'
 import Navbar from '../components/Navbar'
 import Journal from '../components/Journal'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Navigate } from 'react-router-dom'
+import axios from 'axios'
+import PropTypes from 'prop-types'
 
-export default function Journals() {
-  let id = 11
-  const data = [
-    {
-      id: '1',
-      subject: 'My first journal',
-      body: 'This is my first journal here. I am excited to start documenting my thoughts and experiences in this journal. It feels like a new beginning and I am looking forward to writing more.',
-    },
-    {
-      id: '2',
-      subject: 'A day at the park',
-      body: 'Spent a wonderful day at the park with family. We had a picnic, played games, and enjoyed the beautiful weather. It was a perfect day to relax and unwind.',
-    },
-    {
-      id: '3',
-      subject: 'Learning React',
-      body: 'Started learning React today. It is quite interesting! The component-based architecture and the use of hooks make it a powerful library for building user interfaces. I am eager to learn more and build some cool projects.',
-    },
-    {
-      id: '4',
-      subject: 'Grocery shopping',
-      body: 'Went grocery shopping and bought some fresh vegetables. The market was bustling with activity and I managed to get everything on my list. Cooking with fresh ingredients always makes the meals taste better.',
-    },
-    {
-      id: '5',
-      subject: 'Workout routine',
-      body: 'Followed my workout routine and feeling great. Exercise is such an important part of my daily routine and it helps me stay fit and healthy. Today’s session was particularly intense but rewarding.',
-    },
-    {
-      id: '6',
-      subject: 'Movie night',
-      body: 'Watched a great movie with friends last night. It was a comedy and we laughed so much. Spending time with friends and enjoying a good movie is always a fun way to spend the evening.',
-    },
-    {
-      id: '7',
-      subject: 'Cooking experiment',
-      body: 'Tried a new recipe and it turned out delicious. Cooking is one of my favorite hobbies and experimenting with new recipes is always exciting. This new dish will definitely be added to my list of favorites.',
-    },
-    {
-      id: '8',
-      subject: 'Reading a book',
-      body: 'Started reading a new book and it is very engaging. The storyline is captivating and the characters are well-developed. I can’t wait to see how the story unfolds.',
-    },
-    {
-      id: '9',
-      subject: 'Weekend getaway',
-      body: 'Went on a weekend getaway to the mountains. The scenery was breathtaking and it was a great escape from the hustle and bustle of city life. Hiking and exploring nature was refreshing and rejuvenating.',
-    },
-    {
-      id: '10',
-      subject: 'Meeting with old friends',
-      body: 'Had a great time catching up with old friends. We reminisced about the good old days and shared what’s been happening in our lives. It was wonderful to reconnect and strengthen our bonds.',
-    },
-  ]
+Journals.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
 
-  const [journals, setJournals] = useState(data)
+export default function Journals({ isAuthenticated }) {
+  const [journals, setJournals] = useState([])
   const [newJournal, setNewJournal] = useState({ subject: '', body: '' })
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
   const [currentJournal, setCurrentJournal] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleDelete = (id) => {
-    setJournals(journals.filter((journal) => journal.id !== id))
+  useEffect(() => {
+    const fetchJournals = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/journals',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        setJournals(response.data)
+      } catch (error) {
+        console.error('Error fetching journals:', error)
+      }
+    }
+
+    fetchJournals()
+    return () => {}
+  }, [])
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(
+        `https://genesis-precursor-server-production.up.railway.app/journals/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      setJournals(journals.filter((journal) => journal._id !== id))
+    } catch (error) {
+      console.error('Error deleting journal:', error)
+    }
   }
 
   const handleUpdate = (journal) => {
@@ -73,33 +62,75 @@ export default function Journals() {
     setIsUpdateFormOpen(true)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setJournals([...journals, { ...newJournal, id: id++ }])
+    try {
+      setIsLoading(true)
+      const token = localStorage.getItem('token')
+      const response = await axios.post(
+        'https://genesis-precursor-server-production.up.railway.app/journals',
+        newJournal,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      setJournals([...journals, response.data.newJournal])
+    } catch (error) {
+      console.error('Error creating journal:', error)
+    } finally {
+      setIsLoading(false)
+    }
     setNewJournal({ subject: '', body: '' })
     setIsCreateFormOpen(false)
   }
 
-  const handleUpdateSubmit = (e) => {
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault()
-    setJournals(
-      journals.map((journal) =>
-        journal.id === currentJournal.id
-          ? { ...journal, ...currentJournal }
-          : journal
+    try {
+      setIsLoading(true)
+      const token = localStorage.getItem('token')
+      const response = await axios.put(
+        `https://genesis-precursor-server-production.up.railway.app/journals/${currentJournal.id}`,
+        currentJournal,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
-    )
-    setIsUpdateFormOpen(false)
+      setJournals(
+        journals.map((journal) =>
+          journal._id === response.data.updatedJournal._id
+            ? { ...journal, ...response.data.updatedJournal }
+            : journal
+        )
+      )
+      setIsUpdateFormOpen(false)
+    } catch (error) {
+      console.error('Error updating journal:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to={'/signin'} replace />
   }
 
   return (
     <>
       <Navbar />
       <main className='pane journals'>
+        {journals.length === 0 && (
+          <p>There are no journals yet. Create some!</p>
+        )}
+
         {journals.map((journal) => (
           <Journal
-            key={journal.id}
-            id={journal.id}
+            key={journal._id}
+            id={journal._id}
             subject={journal.subject}
             body={journal.body}
             handleDelete={handleDelete}
@@ -172,7 +203,7 @@ export default function Journals() {
                 Cancel
               </button>
               <button type='submit' className='filled'>
-                Create
+                {isLoading ? 'Creating...' : 'Create'}
               </button>
             </div>
           </form>
@@ -231,7 +262,7 @@ export default function Journals() {
                 Cancel
               </button>
               <button type='submit' className='filled'>
-                Update
+                {isLoading ? 'Updating...' : 'Update'}
               </button>
             </div>
           </form>

@@ -1,38 +1,83 @@
 import '../styles/Goals.css'
 import Goal from '../components/Goal'
 import Navbar from '../components/Navbar'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import PropTypes from 'prop-types'
 
-export default function Goals() {
-  let id = 15
-  const data = [
-    { name: 'Learn programming and build a personal project', id: 1 },
-    { name: 'Learn cooking and try out new recipes every week', id: 2 },
-    { name: 'Exercise regularly to maintain a healthy lifestyle', id: 3 },
-    { name: 'Read more books and expand my knowledge', id: 4 },
-    { name: 'Travel the world and experience different cultures', id: 5 },
-    { name: 'Save money for future investments and emergencies', id: 6 },
-    {
-      name: 'Learn a new language on Duolingo practicing everyday to become fluent',
-      id: 7,
-    },
-    { name: 'Start a blog and share my thoughts and experiences', id: 8 },
-    { name: 'Volunteer and give back to the community', id: 9 },
-    { name: 'Improve public speaking skills by joining a local club', id: 10 },
-    { name: 'Take a photography course and improve my skills', id: 11 },
-    { name: 'Meditate daily to improve mental health', id: 12 },
-    { name: 'Learn to play a musical instrument', id: 13 },
-    { name: 'Create a personal website to showcase my portfolio', id: 14 },
-  ]
+Goals.propTypes = {
+  isAuthenticated: PropTypes.bool,
+}
 
-  const [goals, setGoals] = useState(data)
+export default function Goals({ isAuthenticated }) {
+  const [goals, setGoals] = useState([])
+  const [todos, setTodos] = useState([])
   const [newGoalName, setNewGoalName] = useState('')
+  const [currentGoal, setCurrentGoal] = useState(null)
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
-  const [currentGoal, setCurrentGoal] = useState(null)
+  const navigate = useNavigate()
 
-  const handleDelete = (id) => {
-    setGoals(goals.filter((goal) => goal.id !== id))
+  useEffect(() => {
+    const fetchGoals = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/goals',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        setGoals(response.data)
+      } catch (error) {
+        console.error('Error fetching goals:', error)
+      }
+    }
+
+    fetchGoals()
+    return () => {}
+  }, [])
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/todos',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        setTodos(response.data)
+      } catch (error) {
+        console.error('Error fetching todos:', error)
+      }
+    }
+
+    fetchTodos()
+    return () => {}
+  }, [])
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(
+        `https://genesis-precursor-server-production.up.railway.app/goals/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      setGoals(goals.filter((goal) => goal._id !== id))
+    } catch (error) {
+      console.error('Error deleting goal:', error)
+    }
   }
 
   const handleUpdate = (goal) => {
@@ -40,37 +85,96 @@ export default function Goals() {
     setIsUpdateFormOpen(true)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    goals.push({ name: newGoalName, id: id++ })
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.post(
+        'https://genesis-precursor-server-production.up.railway.app/goals',
+        { name: newGoalName },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      setGoals([...goals, response.data.newGoal])
+    } catch (error) {
+      console.error('Error creating goal:', error)
+    }
     setNewGoalName('')
     setIsCreateFormOpen(false)
   }
 
-  const handleUpdateSubmit = (e) => {
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault()
-    setGoals(
-      goals.map((goal) =>
-        goal.id === currentGoal.id ? { ...goal, name: currentGoal.name } : goal
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.put(
+        `https://genesis-precursor-server-production.up.railway.app/goals/${currentGoal.id}`,
+        { name: currentGoal.name },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
-    )
-    setIsUpdateFormOpen(false)
+
+      setGoals(
+        goals.map((goal) =>
+          goal._id === response.data._id
+            ? { ...goal, name: response.data.name }
+            : goal
+        )
+      )
+      setIsUpdateFormOpen(false)
+    } catch (error) {
+      console.error('Error updating goal:', error)
+    }
+  }
+
+  const handleGenerateTodos = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.get(
+        `https://genesis-precursor-server-production.up.railway.app/goals/generateTodos/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      navigate('/todos')
+    } catch (error) {
+      console.error('Error generating todos:', error)
+    }
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to={'/signin'} replace />
   }
 
   return (
     <>
       <Navbar />
       <main className='pane goals'>
-        {goals.map((goal) => (
-          <Goal
-            key={goal.id}
-            id={goal.id}
-            name={goal.name}
-            showGenerateTodos
-            handleDelete={handleDelete}
-            onEdit={handleUpdate}
-          />
-        ))}
+        {goals.length === 0 && <p>There are no goals yet, create some!</p>}
+
+        {goals.map((goal) => {
+          const hasTodos = todos.some((todo) => todo.goal._id === goal._id)
+          return (
+            <Goal
+              key={goal._id}
+              id={goal._id}
+              name={goal.name}
+              showGenerateTodos={!hasTodos}
+              handleDelete={handleDelete}
+              onEdit={handleUpdate}
+              onGenerateTodos={handleGenerateTodos}
+            />
+          )
+        })}
+
         <button
           className='addGoal fab'
           onClick={() => setIsCreateFormOpen(true)}
