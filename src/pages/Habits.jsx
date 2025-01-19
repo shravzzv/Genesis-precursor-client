@@ -314,10 +314,10 @@ export default function Habits({ isAuthenticated }) {
                   <label htmlFor={day}>{day}</label>
                 </div>
               ))}
-              {repeatDaysError && (
-                <span className='error'>Select atleast one repeat day!</span>
-              )}
             </div>
+            {repeatDaysError && (
+              <div className='error'>Select at least one repeat day!</div>
+            )}
 
             <div className='actions'>
               <button
@@ -397,10 +397,10 @@ export default function Habits({ isAuthenticated }) {
                   <label htmlFor={day}></label>
                 </div>
               ))}
-              {repeatDaysError && (
-                <span className='error'>Select atleast one repeat day!</span>
-              )}
             </div>
+            {repeatDaysError && (
+              <div className='error'>Select at least one repeat day!</div>
+            )}
 
             <div className='actions'>
               <button
