@@ -1,8 +1,9 @@
 import '../styles/Todos.css'
 import Todo from '../components/Todo'
 import Navbar from '../components/Navbar'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
+import axios from 'axios'
 import PropTypes from 'prop-types'
 
 Todos.propTypes = {
@@ -10,117 +11,70 @@ Todos.propTypes = {
 }
 
 export default function Todos({ isAuthenticated }) {
-  let id = 15
-  const data = [
-    {
-      title: 'Complete the project report',
-      description:
-        'lorem ipsum dolor sit amet lorem ispum dolor sit maet lorem ispum dolor sit maet',
-      goal: 'Career Advancement of the second kind and lorem ipsum dolor sit amet.',
-      deadline: '2025-01-26T13:39',
-      id: 1,
-    },
-    {
-      title: 'Buy groceries for the week',
-      description: 'Purchase vegetables, fruits, and other essentials',
-      deadline: '2025-01-26T13:39',
-      id: 2,
-    },
-    {
-      title: 'Schedule a meeting with the team',
-      description: 'Organize a meeting to discuss project updates',
-      deadline: '2025-01-26T13:39',
-      goal: 'Career Advancement',
-      id: 3,
-    },
-    {
-      title: 'Pay utility bills',
-      description: 'Pay electricity, water, and internet bills',
-      deadline: '2025-01-26T13:39',
-      id: 4,
-    },
-    {
-      title: 'Plan the weekend trip',
-      description: 'Decide on the destination and make necessary bookings',
-      deadline: '2025-01-26T13:39',
-      goal: 'Recreation & Leisure',
-      id: 5,
-    },
-    {
-      title: 'Organize the workspace',
-      description: 'Clean and arrange the desk and shelves',
-      deadline: '2025-01-26T13:39',
-      id: 6,
-    },
-    {
-      title: 'Read the new book',
-      description: 'Start reading the book purchased last week',
-      deadline: '2025-01-26T13:39',
-      goal: 'Personal Development',
-      id: 7,
-    },
-    {
-      title: 'Exercise for 30 minutes',
-      description: 'Do a 30-minute workout session',
-      deadline: '2025-01-26T13:39',
-      goal: 'Health & Fitness',
-      id: 8,
-    },
-    {
-      title: 'Call family and friends',
-      description: 'Catch up with family and friends over the phone',
-      deadline: '2025-01-26T13:39',
-      id: 9,
-    },
-    {
-      title: 'Prepare for the presentation',
-      description: 'Create slides and practice for the upcoming presentation',
-      deadline: '2025-01-26T13:39',
-      goal: 'Career Advancement',
-      id: 10,
-    },
-    {
-      title: 'Clean the house',
-      description: 'Do a thorough cleaning of the house',
-      deadline: '2025-01-26T13:39',
-      id: 11,
-    },
-    {
-      title: 'Meditate for 15 minutes',
-      description: 'Spend 15 minutes meditating',
-      deadline: '2025-01-26T13:39',
-      goal: 'Spiritual Growth',
-      id: 12,
-    },
-    {
-      title: 'Learn a new skill online',
-      description: 'Enroll in an online course and start learning',
-      deadline: '2025-01-26T13:39',
-      goal: 'Educational Pursuits',
-      id: 13,
-    },
-    {
-      title: 'Update the resume',
-      description: 'Revise and update the resume with recent experiences',
-      deadline: '2025-01-26T13:39',
-      goal: 'Career Advancement',
-      id: 14,
-    },
-  ]
-
-  const [todos, setTodos] = useState(data)
+  const [todos, setTodos] = useState([])
+  const [goals, setGoals] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [currentTodo, setCurrentTodo] = useState(null)
+  console.log('currentTodo:', currentTodo)
+  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
+  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
   const [newTodo, setNewTodo] = useState({
     title: '',
     description: '',
     deadline: '',
     goal: '',
   })
-  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
-  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
-  const [currentTodo, setCurrentTodo] = useState(null)
 
-  const handleDelete = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id))
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get('http://localhost:3000/todos', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setTodos(response.data)
+      } catch (error) {
+        console.error('Error fetching todos:', error)
+      }
+    }
+
+    fetchTodos()
+    return () => {}
+  }, [])
+
+  useEffect(() => {
+    const fetchGoals = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get('http://localhost:3000/goals', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setGoals(response.data)
+      } catch (error) {
+        console.error('Error fetching goals:', error)
+      }
+    }
+
+    fetchGoals()
+    return () => {}
+  }, [])
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(`http://localhost:3000/todos/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      setTodos(todos.filter((todo) => todo._id !== id))
+    } catch (error) {
+      console.error('Error deleting todo:', error)
+    }
   }
 
   const handleUpdate = (todo) => {
@@ -128,9 +82,26 @@ export default function Todos({ isAuthenticated }) {
     setIsUpdateFormOpen(true)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setTodos([...todos, { ...newTodo, id: id++ }])
+    try {
+      setIsLoading(true)
+      const token = localStorage.getItem('token')
+      const response = await axios.post(
+        'http://localhost:3000/todos',
+        newTodo,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      setTodos([...todos, response.data.newTodo])
+    } catch (error) {
+      console.error('Error creating todo:', error)
+    } finally {
+      setIsLoading(false)
+    }
     setNewTodo({
       title: '',
       description: '',
@@ -140,29 +111,34 @@ export default function Todos({ isAuthenticated }) {
     setIsCreateFormOpen(false)
   }
 
-  const handleUpdateSubmit = (e) => {
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault()
-    setTodos(
-      todos.map((todo) =>
-        todo.id === currentTodo.id ? { ...todo, ...currentTodo } : todo
+    try {
+      setIsLoading(true)
+      const token = localStorage.getItem('token')
+      const response = await axios.put(
+        `http://localhost:3000/todos/${currentTodo.id}`,
+        currentTodo,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
-    )
-    setIsUpdateFormOpen(false)
+      setTodos(
+        todos.map((todo) =>
+          todo._id === response.data.updatedTodo._id
+            ? { ...todo, ...response.data.updatedTodo }
+            : todo
+        )
+      )
+      setIsUpdateFormOpen(false)
+    } catch (error) {
+      console.error('Error updating todo:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
-
-  const goals = [
-    'none',
-    'Personal Development',
-    'Health & Fitness',
-    'Career Advancement',
-    'Financial Management',
-    'Relationship Building',
-    'Recreation & Leisure',
-    'Community Service',
-    'Spiritual Growth',
-    'Educational Pursuits',
-    'Home Improvement',
-  ]
 
   if (!isAuthenticated) {
     return <Navigate to={'/signin'} replace />
@@ -172,14 +148,17 @@ export default function Todos({ isAuthenticated }) {
     <>
       <Navbar />
       <main className='pane todos'>
+        {todos.length === 0 && <p>There are no todos yet. Create some!</p>}
+
         {todos.map((todo) => (
           <Todo
-            key={todo.id}
-            id={todo.id}
+            key={todo._id}
+            id={todo._id}
             title={todo.title}
             description={todo.description || ''}
             deadline={todo.deadline || ''}
-            goal={todo.goal || ''}
+            goalName={todo.goal.name || ''}
+            goalId={todo.goal._id}
             handleDelete={handleDelete}
             onEdit={handleUpdate}
           />
@@ -249,6 +228,7 @@ export default function Todos({ isAuthenticated }) {
                 onChange={(e) =>
                   setNewTodo({ ...newTodo, deadline: e.target.value })
                 }
+                required
               />
             </div>
 
@@ -261,10 +241,14 @@ export default function Todos({ isAuthenticated }) {
                 onChange={(e) =>
                   setNewTodo({ ...newTodo, goal: e.target.value })
                 }
+                required
               >
-                {goals.map((goal, index) => (
-                  <option key={index} value={goal}>
-                    {goal}
+                <option value='' disabled>
+                  select a goal
+                </option>
+                {goals.map((goal) => (
+                  <option key={goal._id} value={goal._id}>
+                    {goal.name}
                   </option>
                 ))}
               </select>
@@ -279,7 +263,7 @@ export default function Todos({ isAuthenticated }) {
                 Cancel
               </button>
               <button type='submit' className='filled'>
-                Create
+                {isLoading ? 'Creating...' : 'Create'}
               </button>
             </div>
           </form>
@@ -305,7 +289,7 @@ export default function Todos({ isAuthenticated }) {
                 type='text'
                 name='title'
                 id='title'
-                value={currentTodo?.title || ''}
+                value={currentTodo?.title}
                 onChange={(e) =>
                   setCurrentTodo({ ...currentTodo, title: e.target.value })
                 }
@@ -351,10 +335,14 @@ export default function Todos({ isAuthenticated }) {
                 onChange={(e) =>
                   setCurrentTodo({ ...currentTodo, goal: e.target.value })
                 }
+                required
               >
-                {goals.map((goal, index) => (
-                  <option key={index} value={goal}>
-                    {goal}
+                <option value='' disabled>
+                  select a goal
+                </option>
+                {goals.map((goal) => (
+                  <option key={goal._id} value={goal._id}>
+                    {goal.name}
                   </option>
                 ))}
               </select>
@@ -369,7 +357,7 @@ export default function Todos({ isAuthenticated }) {
                 Cancel
               </button>
               <button type='submit' className='filled'>
-                Update
+                {isLoading ? 'Updating...' : 'Update'}
               </button>
             </div>
           </form>
