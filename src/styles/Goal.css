@@ -24,6 +24,20 @@
     justify-content: center;
     gap: 5px;
   }
+
+  .guidelines {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    svg {
+      fill: var(--on-surface-variant);
+      width: 18px;
+    }
+  }
 }
 
 @media (max-width: 599px) {

@@ -2,7 +2,7 @@ import '../styles/Goals.css'
 import Goal from '../components/Goal'
 import Navbar from '../components/Navbar'
 import { useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 
@@ -16,6 +16,7 @@ export default function Goals({ isAuthenticated }) {
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
   const [currentGoal, setCurrentGoal] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchGoals = async () => {
@@ -103,6 +104,20 @@ export default function Goals({ isAuthenticated }) {
     }
   }
 
+  const handleGenerateTodos = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.get(`http://localhost:3000/goals/generateTodos/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      navigate('/todos')
+    } catch (error) {
+      console.error('Error generating todos:', error)
+    }
+  }
+
   if (!isAuthenticated) {
     return <Navigate to={'/signin'} replace />
   }
@@ -121,8 +136,10 @@ export default function Goals({ isAuthenticated }) {
             showGenerateTodos
             handleDelete={handleDelete}
             onEdit={handleUpdate}
+            onGenerateTodos={handleGenerateTodos}
           />
         ))}
+
         <button
           className='addGoal fab'
           onClick={() => setIsCreateFormOpen(true)}
