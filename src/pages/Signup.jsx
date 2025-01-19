@@ -37,7 +37,6 @@ export default function Signup({ isAuthenticated, setIsAuthenticated }) {
       )
 
       localStorage.setItem('token', response.data.token)
-      localStorage.setItem('uid', response.data.uid)
       setIsAuthenticated(true)
       navigate('/goals')
     } catch (error) {

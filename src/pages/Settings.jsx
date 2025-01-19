@@ -14,7 +14,6 @@ export default function Settings({ isAuthenticated, setIsAuthenticated }) {
 
   const handleLogout = () => {
     localStorage.removeItem('token')
-    localStorage.removeItem('uid')
     setIsAuthenticated(false)
     navigate('/signin')
   }
