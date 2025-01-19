@@ -52,15 +52,6 @@ export default function Settings({ isAuthenticated, setIsAuthenticated }) {
         <h1>GENESIS</h1>
         <p>email: {email}</p>
 
-        <div className='theme'>
-          <span>Theme:</span>
-          <select name='theme' id='theme' defaultValue='system'>
-            <option value='system'>System</option>
-            <option value='light'>Light</option>
-            <option value='dark'>Dark</option>
-          </select>
-        </div>
-
         <button
           className='filled logout scale-in-center'
           onClick={handleLogout}
