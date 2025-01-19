@@ -1,7 +1,9 @@
 import '../styles/Settings.css'
 import Navbar from '../components/Navbar'
+import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import axios from 'axios'
 
 Settings.propTypes = {
   isAuthenticated: PropTypes.bool,
@@ -9,8 +11,26 @@ Settings.propTypes = {
 }
 
 export default function Settings({ isAuthenticated, setIsAuthenticated }) {
-  const email = 'test@email.com'
+  const [email, setEmail] = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const fetchEmail = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get('http://localhost:3000/users/user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setEmail(response.data.email)
+      } catch (error) {
+        console.error('Error fetching email:', error)
+      }
+    }
+
+    fetchEmail()
+  }, [])
 
   const handleLogout = () => {
     localStorage.removeItem('token')
