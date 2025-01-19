@@ -27,11 +27,14 @@ export default function Habits({ isAuthenticated }) {
     const fetchHabits = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('http://localhost:3000/habits', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/habits',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         setHabits(response.data)
       } catch (error) {
         console.error('Error fetching habits:', error)
@@ -45,11 +48,14 @@ export default function Habits({ isAuthenticated }) {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:3000/habits/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await axios.delete(
+        `https://genesis-precursor-server-production.up.railway.app/habits/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       setHabits(habits.filter((habit) => habit._id !== id))
     } catch (error) {
       console.error('Error deleting habit:', error)
@@ -74,7 +80,7 @@ export default function Habits({ isAuthenticated }) {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.post(
-        'http://localhost:3000/habits',
+        'https://genesis-precursor-server-production.up.railway.app/habits',
         newHabit,
         {
           headers: {
@@ -110,7 +116,7 @@ export default function Habits({ isAuthenticated }) {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.put(
-        `http://localhost:3000/habits/${currentHabit.id}`,
+        `https://genesis-precursor-server-production.up.railway.app/habits/${currentHabit.id}`,
         currentHabit,
         {
           headers: {

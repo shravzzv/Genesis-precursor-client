@@ -23,11 +23,14 @@ export default function Goals({ isAuthenticated }) {
     const fetchGoals = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('http://localhost:3000/goals', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/goals',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         setGoals(response.data)
       } catch (error) {
         console.error('Error fetching goals:', error)
@@ -42,11 +45,14 @@ export default function Goals({ isAuthenticated }) {
     const fetchTodos = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('http://localhost:3000/todos', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/todos',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         setTodos(response.data)
       } catch (error) {
         console.error('Error fetching todos:', error)
@@ -60,11 +66,14 @@ export default function Goals({ isAuthenticated }) {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:3000/goals/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await axios.delete(
+        `https://genesis-precursor-server-production.up.railway.app/goals/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       setGoals(goals.filter((goal) => goal._id !== id))
     } catch (error) {
       console.error('Error deleting goal:', error)
@@ -81,7 +90,7 @@ export default function Goals({ isAuthenticated }) {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.post(
-        'http://localhost:3000/goals',
+        'https://genesis-precursor-server-production.up.railway.app/goals',
         { name: newGoalName },
         {
           headers: {
@@ -102,7 +111,7 @@ export default function Goals({ isAuthenticated }) {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.put(
-        `http://localhost:3000/goals/${currentGoal.id}`,
+        `https://genesis-precursor-server-production.up.railway.app/goals/${currentGoal.id}`,
         { name: currentGoal.name },
         {
           headers: {
@@ -127,11 +136,14 @@ export default function Goals({ isAuthenticated }) {
   const handleGenerateTodos = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      await axios.get(`http://localhost:3000/goals/generateTodos/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await axios.get(
+        `https://genesis-precursor-server-production.up.railway.app/goals/generateTodos/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       navigate('/todos')
     } catch (error) {
       console.error('Error generating todos:', error)

@@ -28,11 +28,14 @@ export default function Todos({ isAuthenticated }) {
     const fetchTodos = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('http://localhost:3000/todos', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/todos',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         setTodos(response.data)
       } catch (error) {
         console.error('Error fetching todos:', error)
@@ -47,11 +50,14 @@ export default function Todos({ isAuthenticated }) {
     const fetchGoals = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('http://localhost:3000/goals', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/goals',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         setGoals(response.data)
       } catch (error) {
         console.error('Error fetching goals:', error)
@@ -65,11 +71,14 @@ export default function Todos({ isAuthenticated }) {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:3000/todos/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await axios.delete(
+        `https://genesis-precursor-server-production.up.railway.app/todos/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       setTodos(todos.filter((todo) => todo._id !== id))
     } catch (error) {
       console.error('Error deleting todo:', error)
@@ -87,7 +96,7 @@ export default function Todos({ isAuthenticated }) {
       setIsLoading(true)
       const token = localStorage.getItem('token')
       const response = await axios.post(
-        'http://localhost:3000/todos',
+        'https://genesis-precursor-server-production.up.railway.app/todos',
         newTodo,
         {
           headers: {
@@ -116,7 +125,7 @@ export default function Todos({ isAuthenticated }) {
       setIsLoading(true)
       const token = localStorage.getItem('token')
       const response = await axios.put(
-        `http://localhost:3000/todos/${currentTodo.id}`,
+        `https://genesis-precursor-server-production.up.railway.app/todos/${currentTodo.id}`,
         currentTodo,
         {
           headers: {

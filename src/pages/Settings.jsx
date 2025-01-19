@@ -18,11 +18,14 @@ export default function Settings({ isAuthenticated, setIsAuthenticated }) {
     const fetchEmail = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('http://localhost:3000/users/user', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/users/user',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         setEmail(response.data.email)
       } catch (error) {
         console.error('Error fetching email:', error)

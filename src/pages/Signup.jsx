@@ -32,7 +32,7 @@ export default function Signup({ isAuthenticated, setIsAuthenticated }) {
     try {
       setIsLoading(true)
       const response = await axios.post(
-        'http://localhost:3000/users/signup',
+        'https://genesis-precursor-server-production.up.railway.app/users/signup',
         user
       )
 

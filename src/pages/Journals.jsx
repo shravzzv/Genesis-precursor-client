@@ -22,11 +22,14 @@ export default function Journals({ isAuthenticated }) {
     const fetchJournals = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('http://localhost:3000/journals', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axios.get(
+          'https://genesis-precursor-server-production.up.railway.app/journals',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         setJournals(response.data)
       } catch (error) {
         console.error('Error fetching journals:', error)
@@ -40,11 +43,14 @@ export default function Journals({ isAuthenticated }) {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:3000/journals/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await axios.delete(
+        `https://genesis-precursor-server-production.up.railway.app/journals/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       setJournals(journals.filter((journal) => journal._id !== id))
     } catch (error) {
       console.error('Error deleting journal:', error)
@@ -62,7 +68,7 @@ export default function Journals({ isAuthenticated }) {
       setIsLoading(true)
       const token = localStorage.getItem('token')
       const response = await axios.post(
-        'http://localhost:3000/journals',
+        'https://genesis-precursor-server-production.up.railway.app/journals',
         newJournal,
         {
           headers: {
@@ -86,7 +92,7 @@ export default function Journals({ isAuthenticated }) {
       setIsLoading(true)
       const token = localStorage.getItem('token')
       const response = await axios.put(
-        `http://localhost:3000/journals/${currentJournal.id}`,
+        `https://genesis-precursor-server-production.up.railway.app/journals/${currentJournal.id}`,
         currentJournal,
         {
           headers: {
