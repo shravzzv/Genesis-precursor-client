@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import '../styles/Habit.css'
 import PropTypes from 'prop-types'
 
@@ -21,14 +21,30 @@ export default function Habit({
   onEdit,
   handleDelete,
 }) {
-  const [isCompleted, setIsCompleted] = useState(false)
+  const [isCompleted, setIsCompleted] = useState(() => {
+    const savedStatus = localStorage.getItem(`habit-${id}-completed`)
+    return savedStatus ? JSON.parse(savedStatus) : false
+  })
+
+  useEffect(() => {
+    localStorage.setItem(`habit-${id}-completed`, JSON.stringify(isCompleted))
+  }, [isCompleted, id])
+
+  const handleComplete = () => {
+    setIsCompleted(!isCompleted)
+  }
+
+  const handleDeleteHabit = (id) => {
+    localStorage.removeItem(`habit-${id}-completed`)
+    handleDelete(id)
+  }
 
   return (
     <article className='habit scale-in-center'>
       {isToday ? (
         <div className='today'>
           <p className={`title ${isCompleted ? 'completed' : ''}`}>{title}</p>
-          <button className='icon' onClick={() => setIsCompleted(!isCompleted)}>
+          <button className='icon' onClick={handleComplete}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               height='24px'
@@ -77,7 +93,7 @@ export default function Habit({
               </svg>
             </button>
 
-            <button className='icon' onClick={() => handleDelete(id)}>
+            <button className='icon' onClick={() => handleDeleteHabit(id)}>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 height='24px'
