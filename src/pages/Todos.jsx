@@ -204,6 +204,7 @@ export default function Todos({ isAuthenticated }) {
                 type='text'
                 name='title'
                 id='title'
+                placeholder='Enter a fun title!'
                 value={newTodo.title}
                 onChange={(e) =>
                   setNewTodo({ ...newTodo, title: e.target.value })
@@ -219,6 +220,7 @@ export default function Todos({ isAuthenticated }) {
                 name='description'
                 id='description'
                 rows='3'
+                placeholder='Describe your todo...'
                 value={newTodo.description}
                 onChange={(e) =>
                   setNewTodo({ ...newTodo, description: e.target.value })

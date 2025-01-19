@@ -289,6 +289,7 @@ export default function Habits({ isAuthenticated }) {
                 }
                 required
                 autoFocus
+                placeholder='e.g., Drink Water, Exercise, Read a Book'
               />
             </div>
 
@@ -302,6 +303,7 @@ export default function Habits({ isAuthenticated }) {
                 onChange={(e) =>
                   setNewHabit({ ...newHabit, description: e.target.value })
                 }
+                placeholder='Describe your habit in a fun way!'
               ></textarea>
             </div>
 
