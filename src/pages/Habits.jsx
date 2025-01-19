@@ -118,7 +118,6 @@ export default function Habits({ isAuthenticated }) {
           },
         }
       )
-      console.log(response.data.updatedHabit)
       setHabits(
         habits.map((habit) =>
           habit._id === response.data.updatedHabit._id
