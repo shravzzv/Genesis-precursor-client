@@ -12,10 +12,11 @@ Goals.propTypes = {
 
 export default function Goals({ isAuthenticated }) {
   const [goals, setGoals] = useState([])
+  const [todos, setTodos] = useState([])
   const [newGoalName, setNewGoalName] = useState('')
+  const [currentGoal, setCurrentGoal] = useState(null)
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
-  const [currentGoal, setCurrentGoal] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -34,6 +35,25 @@ export default function Goals({ isAuthenticated }) {
     }
 
     fetchGoals()
+    return () => {}
+  }, [])
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get('http://localhost:3000/todos', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setTodos(response.data)
+      } catch (error) {
+        console.error('Error fetching todos:', error)
+      }
+    }
+
+    fetchTodos()
     return () => {}
   }, [])
 
@@ -128,17 +148,20 @@ export default function Goals({ isAuthenticated }) {
       <main className='pane goals'>
         {goals.length === 0 && <p>There are no goals yet, create some!</p>}
 
-        {goals.map((goal) => (
-          <Goal
-            key={goal._id}
-            id={goal._id}
-            name={goal.name}
-            showGenerateTodos
-            handleDelete={handleDelete}
-            onEdit={handleUpdate}
-            onGenerateTodos={handleGenerateTodos}
-          />
-        ))}
+        {goals.map((goal) => {
+          const hasTodos = todos.some((todo) => todo.goal._id === goal._id)
+          return (
+            <Goal
+              key={goal._id}
+              id={goal._id}
+              name={goal.name}
+              showGenerateTodos={!hasTodos}
+              handleDelete={handleDelete}
+              onEdit={handleUpdate}
+              onGenerateTodos={handleGenerateTodos}
+            />
+          )
+        })}
 
         <button
           className='addGoal fab'
