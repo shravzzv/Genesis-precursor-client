@@ -210,7 +210,7 @@ export default function Goals({ isAuthenticated }) {
                 name='name'
                 id='name'
                 required
-                placeholder='a smart goal'
+                placeholder='A goal you wish to achieve.'
                 value={newGoalName}
                 onChange={(e) => setNewGoalName(e.target.value)}
               />

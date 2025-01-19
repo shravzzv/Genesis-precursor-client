@@ -171,6 +171,7 @@ export default function Journals({ isAuthenticated }) {
                 type='text'
                 name='subject'
                 id='subject'
+                placeholder='Enter a fun subject!'
                 value={newJournal.subject}
                 onChange={(e) =>
                   setNewJournal({ ...newJournal, subject: e.target.value })
@@ -186,6 +187,7 @@ export default function Journals({ isAuthenticated }) {
                 name='body'
                 id='body'
                 rows='3'
+                placeholder='Write something interesting...'
                 value={newJournal.body}
                 onChange={(e) =>
                   setNewJournal({ ...newJournal, body: e.target.value })
