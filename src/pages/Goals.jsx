@@ -17,6 +17,7 @@ export default function Goals({ isAuthenticated }) {
   const [currentGoal, setCurrentGoal] = useState(null)
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false)
   const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -88,6 +89,7 @@ export default function Goals({ isAuthenticated }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
+      setIsLoading(true)
       const token = localStorage.getItem('token')
       const response = await axios.post(
         'https://genesis-precursor-server-production.up.railway.app/goals',
@@ -101,6 +103,8 @@ export default function Goals({ isAuthenticated }) {
       setGoals([...goals, response.data.newGoal])
     } catch (error) {
       console.error('Error creating goal:', error)
+    } finally {
+      setIsLoading(false)
     }
     setNewGoalName('')
     setIsCreateFormOpen(false)
@@ -109,6 +113,7 @@ export default function Goals({ isAuthenticated }) {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault()
     try {
+      setIsLoading(true)
       const token = localStorage.getItem('token')
       const response = await axios.put(
         `https://genesis-precursor-server-production.up.railway.app/goals/${currentGoal.id}`,
@@ -130,6 +135,8 @@ export default function Goals({ isAuthenticated }) {
       setIsUpdateFormOpen(false)
     } catch (error) {
       console.error('Error updating goal:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -225,7 +232,7 @@ export default function Goals({ isAuthenticated }) {
                 Cancel
               </button>
               <button type='submit' className='filled'>
-                Create
+                {isLoading ? 'Creating...' : 'Create'}
               </button>
             </div>
           </form>
@@ -268,7 +275,7 @@ export default function Goals({ isAuthenticated }) {
                 Cancel
               </button>
               <button type='submit' className='filled'>
-                Update
+                {isLoading ? 'Updating...' : 'Update'}
               </button>
             </div>
           </form>
